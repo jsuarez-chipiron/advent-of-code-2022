@@ -5,7 +5,7 @@ project(advent_of_code_2022)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 
 add_executable(day1 src/day1.cpp)
-add_executable(day2 src/day2.cpp)
+add_executable(day2 src/day2.cpp src/lib.cpp)
 
 target_link_libraries(day1 -ltimer)
 target_link_libraries(day2 -ltimer)

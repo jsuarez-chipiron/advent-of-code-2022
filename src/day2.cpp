@@ -1,9 +1,13 @@
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
+#include <algorithm>
+#include <functional>
+#include <numeric>
 #include <timer.h>
+#include "lib.h"
 
-uint32_t perform(const std::string& input_filename, const std::unordered_map<std::string, uint32_t>& map)
+uint32_t perform_iterative(const std::string& input_filename, const std::unordered_map<std::string, uint32_t>& map)
 {
     uint32_t total = 0;
 
@@ -16,6 +20,18 @@ uint32_t perform(const std::string& input_filename, const std::unordered_map<std
     }
 
     return total;
+}
+
+uint32_t perform_functional(const std::string& input_filename, const std::unordered_map<std::string, uint32_t>& map)
+{
+    auto input = read_input(input_filename);
+    std::vector<uint32_t> points = {};
+
+    std::transform(input.begin(), input.end(), std::back_inserter(points), [&map](const auto& i) {
+        return map.at(i);
+    });
+
+    return std::accumulate(points.begin(), points.end(), 0, [](uint32_t a, uint32_t b) {return a+b;});
 }
 
 int main(int /*argc*/, char ** /*argv*/)
@@ -36,7 +52,7 @@ int main(int /*argc*/, char ** /*argv*/)
 
     std::unordered_map<std::string, uint32_t> part2_map =
     {
-        {"A X", 3 },
+        {"A X", 3},
         {"A Y", 4},
         {"A Z", 8},
         {"B X", 1},
@@ -48,11 +64,20 @@ int main(int /*argc*/, char ** /*argv*/)
     };
 
     timer t;
-    auto result = perform("../inputs/day2.txt", part1_map);
-    std::cout << "day 1 part 1 result: " << result << " in " << t.elapsed_micro() << "us\n";
+    auto result = perform_iterative("../inputs/day2.txt", part1_map);
+    std::cout << "day 1 part 1 *iterative* result: " << result << " in " << t.elapsed_micro() << "us\n";
 
     t.reset();
-    result = perform("../inputs/day2.txt", part2_map);
-    std::cout << "day 1 part 2 result: " << result << " in " << t.elapsed_micro() << "us\n";
+    result = perform_iterative("../inputs/day2.txt", part2_map);
+    std::cout << "day 1 part 2 *iterative* result: " << result << " in " << t.elapsed_micro() << "us\n";
+
+    t.reset();
+    result = perform_functional("../inputs/day2.txt", part1_map);
+    std::cout << "day 1 part 1 *functional* result: " << result << " in " << t.elapsed_micro() << "us\n";
+
+    t.reset();
+    result = perform_functional("../inputs/day2.txt", part2_map);
+    std::cout << "day 1 part 2 *functional* result: " << result << " in " << t.elapsed_micro() << "us\n";
+
     return 0;
 }
