@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string_view>
+#include <functional>
 #include <array>
 #include <timer.h>
 #include "lib.h"
@@ -28,7 +29,24 @@ bool contained(std::array<uint32_t, 4> sections)
          ( sections[2] <= sections[0] && sections[3] >= sections[1] );
 }
 
-uint32_t perform(const std::string& input_filename)
+bool overlap(std::array<uint32_t, 4> sections)
+{
+    // not efficient. Look for a better algorithm
+    // Trying this algo but not working :S
+    // return ( sections[1] >= sections[2] && sections[1] >= sections[3] ) ||
+    //     ( sections[3] >= sections[0] && sections[3] >= sections[1] );
+    for (uint32_t i=sections[0]; i<=sections[1]; ++i)
+    {
+        for (uint32_t j=sections[2]; j<=sections[3]; ++j)
+        {
+            if ( i == j ) { return true; }
+        }
+    }
+    return false;
+}
+
+uint32_t perform(const std::string& input_filename, 
+        const std::function<bool(std::array<uint32_t, 4>)>& check)
 {
     auto lines = read_input(input_filename);
     uint32_t result = 0;
@@ -37,7 +55,7 @@ uint32_t perform(const std::string& input_filename)
     {
         auto sections = parse_line(line);
 
-        if ( contained(sections) )
+        if ( check(sections) )
         {
             ++result;
         }
@@ -48,8 +66,12 @@ uint32_t perform(const std::string& input_filename)
 int main(int /*argc*/, char ** /*argv*/)
 {
     timer t;
-    auto result = perform("../inputs/day4.txt");
+    auto result = perform("../inputs/day4.txt", contained);
     std::cout << "day 4 part 1 result: " << result << " in " << t.elapsed_micro() << "us\n";
+
+    t.reset();
+    result = perform("../inputs/day4.txt", overlap);
+    std::cout << "day 4 part 2 result: " << result << " in " << t.elapsed_micro() << "us\n";
 
     return 0;
 }
