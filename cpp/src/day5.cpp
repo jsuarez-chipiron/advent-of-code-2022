@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stack>
 #include <array>
+#include <functional>
 #include <timer.h>
 #include "lib.h"
 
@@ -91,7 +92,7 @@ std::array<uint32_t, 3> parse_command(std::string& line)
     return command;
 }
 
-void execute_command(std::array<std::stack<char>, 9>& stacks, const std::array<uint32_t, 3>& command)
+void execute_command_9000(std::array<std::stack<char>, 9>& stacks, const std::array<uint32_t, 3>& command)
 {
     for (size_t i=0; i<command[0]; ++i)
     {
@@ -99,8 +100,27 @@ void execute_command(std::array<std::stack<char>, 9>& stacks, const std::array<u
         stacks.at(command[1]-1).pop();
     }
 }
+void execute_command_9001(std::array<std::stack<char>, 9>& stacks, const std::array<uint32_t, 3>& command)
+{
+    std::stack<char> memory;
 
-std::string perform(const std::string& input_filename)
+    for (size_t i=0; i<command[0]; ++i)
+    {
+        memory.push(stacks.at(command[1]-1).top());
+        stacks.at(command[1]-1).pop();
+    }
+
+    while ( !memory.empty() )
+    {
+        stacks.at(command[2]-1).push(memory.top());
+        memory.pop();
+    }
+}
+
+
+std::string perform(const std::string& input_filename, 
+        const std::function<void(std::array<std::stack<char>, 9>&, 
+            const std::array<uint32_t, 3>&)>& executor)
 {
     auto stacks = init_structure();
     auto lines = read_input(input_filename);
@@ -109,7 +129,7 @@ std::string perform(const std::string& input_filename)
     {
         if ( line[0] == 'm' )
         {
-            execute_command(stacks, parse_command(line));
+            executor(stacks, parse_command(line));
         }
     }
 
@@ -125,8 +145,12 @@ std::string perform(const std::string& input_filename)
 int main(int /*argc*/, char ** /*argv*/)
 {
     timer t;
-    auto result = perform("../inputs/day5.txt");
+    auto result = perform("../inputs/day5.txt", execute_command_9000);
     std::cout << "day 5 part 1 result: " << result << " in " << t.elapsed_micro() << "us\n";
+
+    t.reset();
+    result = perform("../inputs/day5.txt", execute_command_9001);
+    std::cout << "day 5 part 2 result: " << result << " in " << t.elapsed_micro() << "us\n";
 
     return 0;
 }
