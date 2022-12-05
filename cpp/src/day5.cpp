@@ -5,74 +5,39 @@
 #include <timer.h>
 #include "lib.h"
 
-std::array<std::stack<char>, 9> init_structure()
+std::array<std::stack<char>, 9> init_structure(const std::vector<std::string>& lines)
 {
     std::array<std::stack<char>, 9> result;
 
-    result[0].push('D');
-    result[0].push('T');
-    result[0].push('W');
-    result[0].push('F');
-    result[0].push('J');
-    result[0].push('S');
-    result[0].push('H');
-    result[0].push('N');
+    for (auto line: lines)
+    {
+        if ( line[0] != '[' )
+        {
+            break;
+        }
+        std::string padline = line.append("                                   ");
 
-    result[1].push('H');
-    result[1].push('R');
-    result[1].push('P');
-    result[1].push('Q');
-    result[1].push('T');
-    result[1].push('N');
-    result[1].push('B');
-    result[1].push('G');
+        for (size_t i=0; i<9; ++i)
+        {
+            size_t index = 4*i+1;
+            if ( padline.at(index) != ' ' )
+            {
+                result.at(i).push(padline.at(index));
+            }
+        }
+    }
 
-    result[2].push('L');
-    result[2].push('Q');
-    result[2].push('V');
-
-    result[3].push('N');
-    result[3].push('B');
-    result[3].push('S');
-    result[3].push('W');
-    result[3].push('R');
-    result[3].push('Q');
-
-    result[4].push('N');
-    result[4].push('D');
-    result[4].push('F');
-    result[4].push('T');
-    result[4].push('V');
-    result[4].push('M');
-    result[4].push('B');
-
-    result[5].push('M');
-    result[5].push('D');
-    result[5].push('B');
-    result[5].push('V');
-    result[5].push('H');
-    result[5].push('T');
-    result[5].push('R');
-    
-    result[6].push('D');
-    result[6].push('B');
-    result[6].push('Q');
-    result[6].push('J');
-
-    result[7].push('D');
-    result[7].push('N');
-    result[7].push('J');
-    result[7].push('V');
-    result[7].push('R');
-    result[7].push('Z');
-    result[7].push('H');
-    result[7].push('Q');
-
-    result[8].push('B');
-    result[8].push('N');
-    result[8].push('H');
-    result[8].push('M');
-    result[8].push('S');
+    // reverse the stacks
+    for (auto& stack: result)
+    {
+        std::stack<char> aux;
+        while ( !stack.empty() )
+        {
+            aux.push(stack.top());
+            stack.pop();
+        }
+        stack = aux;
+    }
 
     return result;
 }
@@ -122,8 +87,8 @@ std::string perform(const std::string& input_filename,
         const std::function<void(std::array<std::stack<char>, 9>&, 
             const std::array<uint32_t, 3>&)>& executor)
 {
-    auto stacks = init_structure();
     auto lines = read_input(input_filename);
+    auto stacks = init_structure(lines);
 
     for (auto& line: lines)
     {
