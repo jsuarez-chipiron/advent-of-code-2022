@@ -4,7 +4,7 @@
 #include "lib.h"
 
 template<std::size_t N>
-bool is_valid_key(std::string& s)
+bool is_valid_key(std::string&& s)
 {
     std::sort(s.begin(), s.end());
     char c = s[0];
@@ -27,8 +27,7 @@ size_t perform(const std::string& input_filename)
 
     for (size_t i=0; i<input_length-(N-1); ++i)
     {
-        std::string s = input.substr(i,N);
-        if ( is_valid_key<N>(s) )
+        if ( is_valid_key<N>(input.substr(i,N)) )
         {
             return i+N;
         }
