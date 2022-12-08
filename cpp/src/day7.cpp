@@ -5,6 +5,7 @@
 #include <memory>
 #include <timer.h>
 #include <numeric>
+#include <functional>
 #include "lib.h"
 
 enum node_type
@@ -82,10 +83,7 @@ uint64_t calculate_size_dir(const std::shared_ptr<node>& ptr, std::vector<uint64
         if ( i->get_type() == dir )
         {
             auto dir_size = calculate_size_dir(i, result);
-            if ( dir_size <= 100000 )
-            {
-                result.push_back(dir_size);
-            }
+            result.push_back(dir_size);
             size += dir_size;
         }
     }
@@ -106,6 +104,15 @@ void explore_tree(const std::shared_ptr<node>& ptr, uint64_t level)
             explore_tree(i, ++level);
         }
     }
+}
+
+uint64_t abs(int64_t v)
+{
+    if ( v < 0 )
+    {
+        return v * -1;
+    }
+    return v;
 }
 
 uint64_t perform(const std::string& input_filename)
@@ -167,12 +174,36 @@ uint64_t perform(const std::string& input_filename)
         }
     }
 
-    // explore_tree(root, 0);
-
     std::vector<uint64_t> result_vec;
-    calculate_size_dir(root, result_vec);
+    auto root_size = calculate_size_dir(root, result_vec);
 
-    return std::accumulate(result_vec.begin(), result_vec.end(), 0);
+    // explore_tree(root, 0);
+    std::vector<uint64_t> part1_result;
+
+    std::transform(result_vec.begin(), result_vec.end(), std::back_inserter(part1_result), [](const uint64_t n) -> uint64_t {
+        if ( n > 100000 ) { return 0; }
+        return n;
+    });
+
+    //TODO
+
+    auto x = 70000000-root_size;
+    auto y = 30000000-x;
+    uint64_t min_diff = 99999999999999999;
+    uint64_t result_part2 = 0;
+
+    for (const auto& n: result_vec)
+    {
+        if ( abs((int64_t)(y-n)) < min_diff )
+        {
+            result_part2 = n;
+            min_diff = abs((int64_t)(y-n));
+        }
+    }
+
+    std::cout << "result part2: " << result_part2 << '\n';
+
+    return std::accumulate(part1_result.begin(), part1_result.end(), 0);
 }
 
 int main(int /*argc*/, char ** /*argv*/)
