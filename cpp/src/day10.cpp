@@ -23,7 +23,7 @@ std::vector<int32_t> calculate_instructions_vector(const std::string& input_file
     return result;
 }
 
-uint32_t perform(const std::string& input_filename)
+uint32_t perform_part1(const std::string& input_filename)
 {
     auto instructions_vector = calculate_instructions_vector(input_filename);
     auto result = 0;
@@ -36,11 +36,39 @@ uint32_t perform(const std::string& input_filename)
     return result;
 }
 
+void perform_part2(const std::string& input_filename)
+{
+    auto instructions_vector = calculate_instructions_vector(input_filename);
+    size_t j = 0;
+
+    for (const auto& i: instructions_vector)
+    {
+        if ( j >= i-1 && j <= i+1 )
+        {
+            std::cout << '#';
+        }
+        else
+        {
+            std::cout << '.';
+        }
+        j++;
+        if ( j % 40 == 0 )
+        {
+            j = 0;
+            std::cout << '\n';
+        }
+    }
+}
+
 int main(int /*argc*/, char ** /*argv*/)
 {
     timer t;
-    auto result = perform("../inputs/day10.txt");
+    auto result = perform_part1("../inputs/day10.txt");
     std::cout << "day 10 part 1 result: " << result << " in " << t.elapsed_micro() << "us\n";
+
+    t.reset();
+    perform_part2("../inputs/day10.txt");
+    std::cout << "day 10 part 2: in " << t.elapsed_micro() << "us\n";
 
     return 0;
 }
