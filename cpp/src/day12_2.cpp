@@ -22,10 +22,10 @@ struct board
     std::array<uint32_t, C*F> dist;
     std::array<uint32_t, C*F> prev;
 
-    uint32_t start;
-    uint32_t end;
+    uint32_t start{};
+    uint32_t end{};
 
-    explicit board(const std::string& input_filename)
+    board(const std::string& input_filename, uint32_t starting_point)
     {
         auto lines = read_input(input_filename);
         int32_t i = 0;
@@ -42,7 +42,8 @@ struct board
         start = find_start(); //NOLINT
         end = find_end(); //NOLINT
 
-        dist[start] = 0;
+        if ( starting_point == INF ) { starting_point = start; }
+        dist[starting_point] = 0;
 
         table[start] = 'a';
         table[end] = '{';
@@ -162,9 +163,9 @@ struct board
 };
 
 template <std::size_t F, std::size_t C>
-uint32_t perform(const std::string& input_filename)
+uint32_t perform_part1(const std::string& input_filename)
 {
-    board<F, C> b(input_filename);
+    board<F, C> b(input_filename, INF);
     return b.dist[b.end];
 }
 
@@ -172,7 +173,7 @@ int main(int /*argc*/, char ** /*argv*/)
 {
     timer t;
     // auto result = perform<5, 8>("../inputs/day12_sample.txt");
-    auto result = perform<41, 132>("../inputs/day12.txt");
+    auto result = perform_part1<41, 132>("../inputs/day12.txt");
 
     std::cout << "day 12 part 1 result: " << result << " in " << t.elapsed_micro() << "us\n";
     return 0;
