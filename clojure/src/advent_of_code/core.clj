@@ -54,6 +54,18 @@
     (map #(if (nil? %) 0 1)) 
     (reduce +)))
 
+(defn day6
+  "day 6"
+  [n]
+  (+ (.indexOf (->>
+                 (with-open [reader (io/reader "/home/javier/Tech/c++/advent-of-code/advent-of-code-2022/cpp/inputs/day6.txt")]
+                   (reduce conj [] (line-seq reader)))
+                 (first)
+                 (char-array)
+                 (seq)
+                 (partition n 1)
+                 (map #(count (set %)))) n) n))
+
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
@@ -66,4 +78,8 @@
       (do
         (println (day4-part1))
         (println (day4-part2)))
+    (= args '("day6"))
+      (do
+        (println (day6 4))
+        (println (day6 14)))
     :else (println "error: not valid day")))
