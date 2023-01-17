@@ -17,6 +17,8 @@ add_executable(day11 src/day11.cpp src/lib.cpp)
 add_executable(day12 src/day12.cpp src/lib.cpp)
 add_executable(day12_2 src/day12_2.cpp src/lib.cpp)
 
+add_executable(day1_func src/day1_func.cpp src/lib.cpp)
+
 target_link_libraries(day1 -ltimer)
 target_link_libraries(day2 -ltimer)
 target_link_libraries(day3 -ltimer)
@@ -29,3 +31,5 @@ target_link_libraries(day10 -ltimer)
 target_link_libraries(day11 -ltimer)
 target_link_libraries(day12 -ltimer)
 target_link_libraries(day12_2 -ltimer)
+
+target_link_libraries(day1_func -ltimer)
